@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SnakeMon</string>
+    <string name="description">Live Wallpaper</string>
+    <string name="settings_title">SnakeMon Settings</string>
+
+</resources>
