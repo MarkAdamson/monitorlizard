@@ -8,9 +8,14 @@ import android.service.wallpaper.WallpaperService;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+
 public class SnakeMonService extends WallpaperService {
 
     public static final String SHARED_PREFS_NAME="snakemonsettings";
+    public static final int DIR_LEFT = 0;
+    public static final int DIR_UP = 1;
+    public static final int DIR_RIGHT = 2;
+    public static final int DIR_DOWN = 3;
 
     private final Handler mHandler = new Handler();
 
