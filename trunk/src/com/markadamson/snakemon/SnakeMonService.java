@@ -45,6 +45,8 @@ public class SnakeMonService extends WallpaperService {
         private float mCenterY;
         private float mWidth;
         private float mHeight;
+        
+        private Snake mSnake;
 
         private final Runnable mDraw = new Runnable() {
             public void run() {
@@ -97,6 +99,7 @@ public class SnakeMonService extends WallpaperService {
             mCenterY = height/2.0f;
             mWidth = width;
             mHeight = height;
+            mSnake = new Snake(mCenterX, mCenterY);
             drawFrame();
         }
 
@@ -145,12 +148,10 @@ public class SnakeMonService extends WallpaperService {
             Canvas c = null;
             try {
                 c = holder.lockCanvas();
-                if (c != null) {
-                    c.save();
-                    c.translate(mCenterX, mCenterY);
-                    c.drawColor(0xff000000);
-                	c.drawRect(-5, -5, 5, 5, mPaint);
-                    c.restore();
+                if(c != null)
+                {
+                	mSnake.Move();
+                	mSnake.Draw(c);
                 }
             } finally {
                 if (c != null) holder.unlockCanvasAndPost(c);
