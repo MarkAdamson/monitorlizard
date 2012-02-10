@@ -18,7 +18,7 @@ public class Segment
 
         // Create a Paint to draw the lines for our cube
         final Paint paint = mPaint;
-        paint.setColor(0xffff00ff);
+        paint.setColor(0xff00ff00);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(2);
         paint.setStrokeCap(Paint.Cap.ROUND);
@@ -51,9 +51,9 @@ public class Segment
 	
 	void Draw(Canvas c)
 	{
-		c.save();
-		c.translate(Xpos * 5.0f, Ypos * 5.0f);
-		c.drawRect(0, 0, 5, 5, mPaint);
-		c.restore();
+		//c.save();
+		c.translate(Xpos * 10.0f, Ypos * 10.0f);
+		c.drawRect(0, 0, 10, 10, mPaint);
+		//c.restore();
 	}
 }
