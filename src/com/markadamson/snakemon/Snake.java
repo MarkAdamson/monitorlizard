@@ -36,8 +36,8 @@ public class Snake
 			switch(direction)
 			{
 			case 0:
-				newXpos = Xpos - 1;
-				if(Math.abs(newXpos * 5)>Xlimit)
+				newXpos = head.Xpos - 1;
+				if(Math.abs(newXpos * 10)>Xlimit)
 				{
 					direction = 1;
 					break;
@@ -45,8 +45,8 @@ public class Snake
 				moved = true;
 				break;
 			case 1:
-				newYpos = Ypos - 1;
-				if(Math.abs(newYpos * 5)>Ylimit)
+				newYpos = head.Ypos - 1;
+				if(Math.abs(newYpos * 10)>Ylimit)
 				{
 					direction = 2;
 					break;
@@ -54,8 +54,8 @@ public class Snake
 				moved = true;
 				break;
 			case 2:
-				newXpos = Xpos + 1;
-				if(newXpos * 5 + 5 > Xlimit)
+				newXpos = head.Xpos + 1;
+				if(newXpos * 10 + 10 > Xlimit)
 				{
 					direction = 3;
 					break;
@@ -63,8 +63,8 @@ public class Snake
 				moved = true;
 				break;
 			case 3:
-				newYpos = Ypos + 1;
-				if(newYpos * 5 + 5 > Ylimit)
+				newYpos = head.Ypos + 1;
+				if(newYpos * 10 + 10 > Ylimit)
 				{
 					direction = 0;
 					break;
@@ -78,6 +78,10 @@ public class Snake
 	}
 	void Draw(Canvas c)
 	{
+		c.save();
+		c.drawColor(0xff000000);
+		c.translate(Xlimit, Ylimit);
 		head.Draw(c);
+		c.restore();
 	}
 }

@@ -1,11 +1,9 @@
 package com.markadamson.snakemon;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.service.wallpaper.WallpaperService;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 
@@ -36,10 +34,7 @@ public class SnakeMonService extends WallpaperService {
 
     class SnakeEngine extends Engine {
 
-        private final Paint mPaint = new Paint();
         private float mOffset;
-        private float mTouchX = -1;
-        private float mTouchY = -1;
         private long mStartTime;
         private float mCenterX;
         private float mCenterY;
@@ -56,13 +51,6 @@ public class SnakeMonService extends WallpaperService {
         private boolean mVisible;
 
         SnakeEngine() {
-            // Create a Paint to draw the lines for our cube
-            final Paint paint = mPaint;
-            paint.setColor(0x00ff00ff);
-            paint.setAntiAlias(true);
-            paint.setStrokeWidth(2);
-            paint.setStrokeCap(Paint.Cap.ROUND);
-            paint.setStyle(Paint.Style.STROKE);
 
             mStartTime = SystemClock.elapsedRealtime();
         }
@@ -70,9 +58,6 @@ public class SnakeMonService extends WallpaperService {
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
             super.onCreate(surfaceHolder);
-
-            // By default we don't get touch events, so enable them.
-            setTouchEventsEnabled(true);
         }
 
         @Override
@@ -123,21 +108,6 @@ public class SnakeMonService extends WallpaperService {
         }
 
         /*
-         * Store the position of the touch event so we can use it for drawing later
-         */
-        @Override
-        public void onTouchEvent(MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                mTouchX = event.getX();
-                mTouchY = event.getY();
-            } else {
-                mTouchX = -1;
-                mTouchY = -1;
-            }
-            super.onTouchEvent(event);
-        }
-
-        /*
          * Draw one frame of the animation. This method gets called repeatedly
          * by posting a delayed Runnable. You can do any drawing you want in
          * here. This example draws a wireframe cube.
@@ -161,15 +131,6 @@ public class SnakeMonService extends WallpaperService {
             mHandler.removeCallbacks(mDraw);
             if (mVisible) {
                 mHandler.postDelayed(mDraw, 1000 / 25);
-            }
-        }
-
-        /*
-         * Draw a circle around the current touch point, if any.
-         */
-        void drawTouchPoint(Canvas c) {
-            if (mTouchX >=0 && mTouchY >= 0) {
-                c.drawCircle(mTouchX, mTouchY, 80, mPaint);
             }
         }
 
