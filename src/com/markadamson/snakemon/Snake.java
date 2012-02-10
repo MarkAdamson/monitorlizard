@@ -3,14 +3,16 @@ package com.markadamson.snakemon;
 import java.util.Random;
 
 import android.graphics.Canvas;
+import android.os.SystemClock;
 
 public class Snake
 {
-	int Xpos;
-	int Ypos;
 	float Xlimit;
 	float Ylimit;
+    private long now;
+    private int remainder;
 	int direction;
+	int speed;
 	Canvas c;
 	
 	Segment head;
@@ -20,61 +22,67 @@ public class Snake
 		//Initialise values
 		this.Xlimit = Xlimit;
 		this.Ylimit = Ylimit;
-		Xpos = 0;
-		Ypos = 0;
 		direction = new Random().nextInt(3);
+        now = SystemClock.elapsedRealtime();
 		
-		head = new Segment(Xpos, Ypos, direction);
+		head = new Segment(0, 0, direction);
 	}
 	void Move()
 	{
-		boolean moved = false;
-		while(!moved)
+		long dt = SystemClock.elapsedRealtime() - now + remainder;
+		int steps = (int) (dt/50);
+		now += steps * 50;
+		remainder = (int) (dt % 50);
+		for(int i=0;i<steps;i++)
 		{
-			int newXpos;
-			int newYpos;
-			switch(direction)
+			boolean moved = false;
+			while(!moved)
 			{
-			case 0:
-				newXpos = head.Xpos - 1;
-				if(Math.abs(newXpos * 10)>Xlimit)
+				int newXpos;
+				int newYpos;
+				switch(direction)
 				{
-					direction = 1;
+				case 0:
+					newXpos = head.Xpos - 1;
+					if(Math.abs(newXpos * 10)>Xlimit)
+					{
+						direction = 1;
+						break;
+					}	
+					moved = true;
+					break;
+				case 1:
+					newYpos = head.Ypos - 1;
+					if(Math.abs(newYpos * 10)>Ylimit)
+					{
+						direction = 2;
+						break;
+					}
+					moved = true;
+					break;
+				case 2:
+					newXpos = head.Xpos + 1;
+					if(newXpos * 10 + 10 > Xlimit)
+					{
+						direction = 3;
+						break;
+					}
+					moved = true;
+					break;
+				case 3:
+					newYpos = head.Ypos + 1;
+					if(newYpos * 10 + 10 > Ylimit)
+					{
+						direction = 0;
+						break;
+					}
+					moved = true;
 					break;
 				}
-				moved = true;
-				break;
-			case 1:
-				newYpos = head.Ypos - 1;
-				if(Math.abs(newYpos * 10)>Ylimit)
-				{
-					direction = 2;
-					break;
-				}
-				moved = true;
-				break;
-			case 2:
-				newXpos = head.Xpos + 1;
-				if(newXpos * 10 + 10 > Xlimit)
-				{
-					direction = 3;
-					break;
-				}
-				moved = true;
-				break;
-			case 3:
-				newYpos = head.Ypos + 1;
-				if(newYpos * 10 + 10 > Ylimit)
-				{
-					direction = 0;
-					break;
-				}
-				moved = true;
-				break;
 			}
+			head.setDirection(direction);
+			head.Move();
 		}
-		head.setDirection(direction);
-		head.Move();
 	}
 	void Draw(Canvas c)
 	{

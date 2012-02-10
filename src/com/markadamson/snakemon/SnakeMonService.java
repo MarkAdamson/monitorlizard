@@ -35,7 +35,6 @@ public class SnakeMonService extends WallpaperService {
     class SnakeEngine extends Engine {
 
         private float mOffset;
-        private long mStartTime;
         private float mCenterX;
         private float mCenterY;
         private float mWidth;
@@ -52,7 +51,6 @@ public class SnakeMonService extends WallpaperService {
 
         SnakeEngine() {
 
-            mStartTime = SystemClock.elapsedRealtime();
         }
 
         @Override
