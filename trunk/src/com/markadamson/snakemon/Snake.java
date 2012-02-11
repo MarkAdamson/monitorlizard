@@ -2,8 +2,10 @@ package com.markadamson.snakemon;
 
 import java.util.Random;
 
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 
 public class Snake
 {
@@ -12,27 +14,33 @@ public class Snake
     private long now;
     private int remainder;
 	int direction;
-	int speed;
+	private int speed;
 	Canvas c;
 	
 	Segment head;
 	
-	Snake (float Xlimit, float Ylimit)
+	Snake (float Xlimit, float Ylimit, int speed)
 	{
 		//Initialise values
 		this.Xlimit = Xlimit;
 		this.Ylimit = Ylimit;
 		direction = new Random().nextInt(3);
         now = SystemClock.elapsedRealtime();
-		
+		this.speed = speed;
 		head = new Segment(0, 0, direction);
+	}
+	
+	void SetSpeed(int speed)
+	{
+		this.speed = speed;
 	}
 	void Move()
 	{
 		long dt = SystemClock.elapsedRealtime() - now + remainder;
-		int steps = (int) (dt/50);
-		now += steps * 50;
-		remainder = (int) (dt % 50);
+		int millisPerStep = 200 - (int) (speed  * 1.9);
+		int steps = (int) (dt/millisPerStep);
+		now += steps * millisPerStep;
+		remainder = (int) (dt % millisPerStep);
 		for(int i=0;i<steps;i++)
 		{
 			boolean moved = false;

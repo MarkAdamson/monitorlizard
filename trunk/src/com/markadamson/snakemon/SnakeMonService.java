@@ -1,8 +1,10 @@
 package com.markadamson.snakemon;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Canvas;
 import android.os.Handler;
-import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
 
@@ -29,16 +31,19 @@ public class SnakeMonService extends WallpaperService {
 
     @Override
     public Engine onCreateEngine() {
-        return new SnakeEngine();
+    	SharedPreferences prefs = getSharedPreferences(SHARED_PREFS_NAME,0);
+        return new SnakeEngine(prefs);
     }
 
-    class SnakeEngine extends Engine {
+    class SnakeEngine extends Engine implements OnSharedPreferenceChangeListener{
 
         private float mOffset;
         private float mCenterX;
         private float mCenterY;
         private float mWidth;
         private float mHeight;
+        
+        private SharedPreferences prefs;
         
         private Snake mSnake;
 
@@ -49,8 +54,9 @@ public class SnakeMonService extends WallpaperService {
         };
         private boolean mVisible;
 
-        SnakeEngine() {
-
+        SnakeEngine(SharedPreferences prefs) {
+        	this.prefs = prefs;
+        	this.prefs.registerOnSharedPreferenceChangeListener(this);
         }
 
         @Override
@@ -82,7 +88,8 @@ public class SnakeMonService extends WallpaperService {
             mCenterY = height/2.0f;
             mWidth = width;
             mHeight = height;
-            mSnake = new Snake(mCenterX, mCenterY);
+            prefs.getBoolean("keystring", true);
+            mSnake = new Snake(mCenterX, mCenterY, Integer.parseInt(prefs.getString("snake_speed", "50")));
             drawFrame();
         }
 
@@ -131,6 +138,16 @@ public class SnakeMonService extends WallpaperService {
                 mHandler.postDelayed(mDraw, 1000 / 25);
             }
         }
+
+		@Override
+		public void onSharedPreferenceChanged(
+				SharedPreferences prefs, String key) {
+			if(key.equals("snake_speed"))
+			{
+				mSnake.SetSpeed(Integer.parseInt(prefs.getString(key, "50")));
+			}
+			
+		}
 
     }
 }
