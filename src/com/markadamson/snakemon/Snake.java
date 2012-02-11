@@ -2,10 +2,8 @@ package com.markadamson.snakemon;
 
 import java.util.Random;
 
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 
 public class Snake
 {
@@ -36,8 +34,8 @@ public class Snake
 	}
 	void Move()
 	{
-		long dt = SystemClock.elapsedRealtime() - now + remainder;
-		int millisPerStep = 200 - (int) (speed  * 1.9);
+		int dt = (int) (SystemClock.elapsedRealtime() - now + remainder);
+		float millisPerStep = 200 - (speed  * 2f - 10);
 		int steps = (int) (dt/millisPerStep);
 		now += steps * millisPerStep;
 		remainder = (int) (dt % millisPerStep);

@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Canvas;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
 
@@ -37,11 +36,10 @@ public class SnakeMonService extends WallpaperService {
 
     class SnakeEngine extends Engine implements OnSharedPreferenceChangeListener{
 
-        private float mOffset;
+        @SuppressWarnings("unused")
+		private float mOffset;
         private float mCenterX;
         private float mCenterY;
-        private float mWidth;
-        private float mHeight;
         
         private SharedPreferences prefs;
         
@@ -86,8 +84,6 @@ public class SnakeMonService extends WallpaperService {
             // store the center of the surface, so we can draw the cube in the right spot
             mCenterX = width/2.0f;
             mCenterY = height/2.0f;
-            mWidth = width;
-            mHeight = height;
             prefs.getBoolean("keystring", true);
             mSnake = new Snake(mCenterX, mCenterY, Integer.parseInt(prefs.getString("snake_speed", "50")));
             drawFrame();
