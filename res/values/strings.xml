@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SnakeMon</string>
-    <string name="description">Live Wallpaper</string>
-    <string name="settings_title">SnakeMon Settings</string>
+    <string name="app_name">Monitor Lizard Live Wallpaper</string>
+    <string name="description">Displays your system stats as a self-playing game of Snake</string>
+    <string name="settings_title">Monitor Lizard Settings</string>
+    <string name="wallpaper_name">Monitor Lizard</string>
+    <string name="speed_setting">Snake Speed</string>
+    <string name="speed_setting_desc">Snake speed</string>
 
 </resources>
