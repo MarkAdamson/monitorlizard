@@ -24,6 +24,16 @@ public class Segment
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
 	}
+
+	int getXpos()
+	{
+		return Xpos;
+	}
+	
+	int getYpos()
+	{
+		return Ypos;
+	}
 	
 	void Move()
 	{
@@ -55,5 +65,10 @@ public class Segment
 		c.translate(Xpos * size, Ypos * size);
 		c.drawRect(0, 0, size, size, mPaint);
 		//c.restore();
+	}
+
+	public int getDirection() {
+		// TODO Auto-generated method stub
+		return direction;
 	}
 }

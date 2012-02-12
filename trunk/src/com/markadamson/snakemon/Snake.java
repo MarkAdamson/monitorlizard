@@ -22,7 +22,7 @@ public class Snake
 	Canvas c;
 	
 	Segment head;
-	List<Segment> body = new ArrayList();
+	List<Segment> tail = new ArrayList();
 	
 	Snake (float Xlimit, float Ylimit, int speed, int length)
 	{
@@ -50,6 +50,32 @@ public class Snake
 		remainder = (int) (dt % millisPerStep);
 		for(int i=0;i<steps;i++)
 		{
+			int lastXpos = head.getXpos();
+			int lastYpos = head.getYpos();
+			int lastDirection = head.getDirection();
+			head.Move();
+			Iterator<Segment> itr = tail.iterator();
+			while(itr.hasNext())
+			{
+				Segment currentSeg = itr.next();
+				lastXpos = currentSeg.getXpos();
+				lastYpos = currentSeg.getYpos();
+				lastDirection = currentSeg.getDirection();
+				currentSeg.Move();
+			}
+			
+			if(length<requiredLength)
+			{
+				tail.add(new Segment(lastXpos, lastYpos, lastDirection));
+				length++;
+			}
+			
+			for(int j=tail.size()-1; j>=0; j--)
+			{
+				if(j>0) tail.get(j).setDirection(tail.get(j-1).getDirection());
+				else tail.get(j).setDirection(head.getDirection());
+			}
+			
 			boolean moved = false;
 			while(!moved)
 			{
@@ -96,9 +122,6 @@ public class Snake
 				}
 			}
 			head.setDirection(direction);
-			head.Move();
-			
-			//for(int i=0; body.
 		}
 	}
 	void Draw(Canvas c)
@@ -107,6 +130,11 @@ public class Snake
 		c.drawColor(0xff000000);
 		c.translate(Xlimit, Ylimit);
 		head.Draw(segSize, c);
+		Iterator itr = (Iterator) tail.iterator();
+		while(itr.hasNext())
+		{
+			((Segment)itr.next()).Draw(segSize, c);
+		}
 		c.restore();
 	}
 }
