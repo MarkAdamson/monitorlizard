@@ -130,10 +130,10 @@ public class Snake
 		c.drawColor(0xff000000);
 		c.translate(Xlimit, Ylimit);
 		head.Draw(segSize, c);
-		Iterator itr = (Iterator) tail.iterator();
+		Iterator<Segment> itr = (Iterator) tail.iterator();
 		while(itr.hasNext())
 		{
-			((Segment)itr.next()).Draw(segSize, c);
+			itr.next().Draw(segSize, c);
 		}
 		c.restore();
 	}
