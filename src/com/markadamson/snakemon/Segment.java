@@ -20,9 +20,9 @@ public class Segment
         final Paint paint = mPaint;
         paint.setColor(0xff00ff00);
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(2);
+        paint.setStrokeWidth(10);
         paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStyle(Paint.Style.STROKE);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
 	}
 	
 	void Move()
@@ -49,11 +49,11 @@ public class Segment
 		direction = d;
 	}
 	
-	void Draw(Canvas c)
+	void Draw(float size, Canvas c)
 	{
 		//c.save();
-		c.translate(Xpos * 10.0f, Ypos * 10.0f);
-		c.drawRect(0, 0, 10, 10, mPaint);
+		c.translate(Xpos * size, Ypos * size);
+		c.drawRect(0, 0, size, size, mPaint);
 		//c.restore();
 	}
 }
