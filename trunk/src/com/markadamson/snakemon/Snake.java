@@ -13,6 +13,9 @@ public class Snake
     private int remainder;
 	int direction;
 	private int speed;
+	private float segSize = 30;
+	private int length;
+	private int requiredLength;
 	Canvas c;
 	
 	Segment head;
@@ -50,7 +53,7 @@ public class Snake
 				{
 				case 0:
 					newXpos = head.Xpos - 1;
-					if(Math.abs(newXpos * 10)>Xlimit)
+					if(Math.abs(newXpos * segSize)>Xlimit)
 					{
 						direction = 1;
 						break;
@@ -59,7 +62,7 @@ public class Snake
 					break;
 				case 1:
 					newYpos = head.Ypos - 1;
-					if(Math.abs(newYpos * 10)>Ylimit)
+					if(Math.abs(newYpos * segSize)>Ylimit)
 					{
 						direction = 2;
 						break;
@@ -68,7 +71,7 @@ public class Snake
 					break;
 				case 2:
 					newXpos = head.Xpos + 1;
-					if(newXpos * 10 + 10 > Xlimit)
+					if(newXpos * segSize + segSize > Xlimit)
 					{
 						direction = 3;
 						break;
@@ -77,7 +80,7 @@ public class Snake
 					break;
 				case 3:
 					newYpos = head.Ypos + 1;
-					if(newYpos * 10 + 10 > Ylimit)
+					if(newYpos * segSize + segSize > Ylimit)
 					{
 						direction = 0;
 						break;
@@ -95,7 +98,7 @@ public class Snake
 		c.save();
 		c.drawColor(0xff000000);
 		c.translate(Xlimit, Ylimit);
-		head.Draw(c);
+		head.Draw(segSize, c);
 		c.restore();
 	}
 }
