@@ -1,5 +1,8 @@
 package com.markadamson.snakemon;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import android.graphics.Canvas;
@@ -19,8 +22,9 @@ public class Snake
 	Canvas c;
 	
 	Segment head;
+	List<Segment> body = new ArrayList();
 	
-	Snake (float Xlimit, float Ylimit, int speed)
+	Snake (float Xlimit, float Ylimit, int speed, int length)
 	{
 		//Initialise values
 		this.Xlimit = Xlimit;
@@ -29,6 +33,8 @@ public class Snake
         now = SystemClock.elapsedRealtime();
 		this.speed = speed;
 		head = new Segment(0, 0, direction);
+		this.requiredLength = length;
+		length = 1;
 	}
 	
 	void SetSpeed(int speed)
@@ -91,6 +97,8 @@ public class Snake
 			}
 			head.setDirection(direction);
 			head.Move();
+			
+			//for(int i=0; body.
 		}
 	}
 	void Draw(Canvas c)

@@ -85,7 +85,7 @@ public class SnakeMonService extends WallpaperService {
             mCenterX = width/2.0f;
             mCenterY = height/2.0f;
             prefs.getBoolean("keystring", true);
-            mSnake = new Snake(mCenterX, mCenterY, Integer.parseInt(prefs.getString("snake_speed", "50")));
+            mSnake = new Snake(mCenterX, mCenterY, Integer.parseInt(prefs.getString("snake_speed", "50")),1);
             drawFrame();
         }
 
