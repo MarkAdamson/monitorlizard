@@ -1,10 +1,14 @@
 package com.markadamson.snakemon;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.service.wallpaper.WallpaperService;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 
@@ -51,6 +55,13 @@ public class SnakeMonService extends WallpaperService {
                 drawFrame();
             }
         };
+        
+        private final Runnable mPollSys = new Runnable() {
+        	public void run() {
+        		pollSys();
+        	}
+        };
+        
         private boolean mVisible;
 
         SnakeEngine(SharedPreferences prefs) {
@@ -67,15 +78,18 @@ public class SnakeMonService extends WallpaperService {
         public void onDestroy() {
             super.onDestroy();
             mHandler.removeCallbacks(mDraw);
+            mHandler.removeCallbacks(mPollSys);
         }
 
         @Override
         public void onVisibilityChanged(boolean visible) {
             mVisible = visible;
             if (visible) {
+                pollSys();
                 drawFrame();
             } else {
                 mHandler.removeCallbacks(mDraw);
+                mHandler.removeCallbacks(mPollSys);
             }
         }
 
@@ -86,8 +100,9 @@ public class SnakeMonService extends WallpaperService {
             mCenterX = width/2.0f;
             mCenterY = height/2.0f;
             //prefs.getBoolean("keystring", true);
-            mSpeed = Integer.parseInt(prefs.getString("snake_speed", "50"));
-            mSnake = new Snake(mCenterX, mCenterY, 5);
+            mSpeed = 50;
+            mSnake = new Snake(mCenterX, mCenterY, 50);
+            pollSys();
             drawFrame();
         }
 
@@ -101,12 +116,14 @@ public class SnakeMonService extends WallpaperService {
             super.onSurfaceDestroyed(holder);
             mVisible = false;
             mHandler.removeCallbacks(mDraw);
+            mHandler.removeCallbacks(mPollSys);
         }
 
         @Override
         public void onOffsetsChanged(float xOffset, float yOffset,
                 float xStep, float yStep, int xPixels, int yPixels) {
             mOffset = xOffset;
+            pollSys();
             drawFrame();
         }
 
@@ -116,6 +133,7 @@ public class SnakeMonService extends WallpaperService {
          * here. This example draws a wireframe cube.
          */
         void drawFrame() {
+        	long startTime = System.currentTimeMillis();
             final SurfaceHolder holder = getSurfaceHolder();
 
             Canvas c = null;
@@ -131,18 +149,61 @@ public class SnakeMonService extends WallpaperService {
             }
 
             // Reschedule the next redraw
+            long sleepTime = 1000 / ((mSpeed / 3) + 1) - (System.currentTimeMillis() - startTime);
             mHandler.removeCallbacks(mDraw);
             if (mVisible) {
-                mHandler.postDelayed(mDraw, 1000 / (mSpeed / 3 + 1));
+            	if(sleepTime < 0) mHandler.postDelayed(mDraw, 10);
+            	else mHandler.postDelayed(mDraw, sleepTime);
             }
+        }
+        
+        void pollSys() {
+        	mSpeed = (int) readUsage();
+        	Log.d("CPU: " ,Integer.toString(mSpeed));
+        	mHandler.removeCallbacks(mPollSys);
+        	if(mVisible) mHandler.postDelayed(mPollSys, 10000);
         }
 
         @Override
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		if(key.equals("snake_speed"))
-		{
-			mSpeed = Integer.parseInt(prefs.getString(key, "50"));
-		}
+			/*if(key.equals("snake_speed"))
+			{
+				mSpeed = Integer.parseInt(prefs.getString(key, "50"));
+			}*/
         }
+        
+        private float readUsage() {
+            try {
+                RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");
+                String load = reader.readLine();
+
+                String[] toks = load.split(" ");
+
+                long idle1 = Long.parseLong(toks[5]);
+                long cpu1 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4])
+                      + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
+
+                try {
+                    Thread.sleep(360);
+                } catch (Exception e) {}
+
+                reader.seek(0);
+                load = reader.readLine();
+                reader.close();
+
+                toks = load.split(" ");
+
+                long idle2 = Long.parseLong(toks[5]);
+                long cpu2 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4])
+                    + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
+
+                return (float)(cpu2 - cpu1) / ((cpu2 + idle2) - (cpu1 + idle1));
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            return 0;
+        } 
     }
 }
