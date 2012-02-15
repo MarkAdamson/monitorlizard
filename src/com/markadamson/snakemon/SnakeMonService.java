@@ -34,12 +34,13 @@ public class SnakeMonService extends WallpaperService {
         return new SnakeEngine(prefs);
     }
 
-    class SnakeEngine extends Engine implements OnSharedPreferenceChangeListener{
+    class SnakeEngine extends Engine implements OnSharedPreferenceChangeListener {
 
         @SuppressWarnings("unused")
-		private float mOffset;
+        private float mOffset;
         private float mCenterX;
         private float mCenterY;
+        private int mSpeed;
         
         private SharedPreferences prefs;
         
@@ -84,8 +85,9 @@ public class SnakeMonService extends WallpaperService {
             // store the center of the surface, so we can draw the cube in the right spot
             mCenterX = width/2.0f;
             mCenterY = height/2.0f;
-            prefs.getBoolean("keystring", true);
-            mSnake = new Snake(mCenterX, mCenterY, Integer.parseInt(prefs.getString("snake_speed", "50")),5);
+            //prefs.getBoolean("keystring", true);
+            mSpeed = Integer.parseInt(prefs.getString("snake_speed", "50"));
+            mSnake = new Snake(mCenterX, mCenterY, 5);
             drawFrame();
         }
 
@@ -131,19 +133,16 @@ public class SnakeMonService extends WallpaperService {
             // Reschedule the next redraw
             mHandler.removeCallbacks(mDraw);
             if (mVisible) {
-                mHandler.postDelayed(mDraw, 1000 / 25);
+                mHandler.postDelayed(mDraw, 1000 / (mSpeed / 3 + 1));
             }
         }
 
-		@Override
-		public void onSharedPreferenceChanged(
-				SharedPreferences prefs, String key) {
-			if(key.equals("snake_speed"))
-			{
-				mSnake.SetSpeed(Integer.parseInt(prefs.getString(key, "50")));
-			}
-			
+        @Override
+		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		if(key.equals("snake_speed"))
+		{
+			mSpeed = Integer.parseInt(prefs.getString(key, "50"));
 		}
-
+        }
     }
 }
