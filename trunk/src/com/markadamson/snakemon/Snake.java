@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 import android.graphics.Canvas;
-import android.os.SystemClock;
 
 public class Snake
 {
@@ -19,7 +18,7 @@ public class Snake
 	Canvas c;
 	
 	Segment head;
-	List<Segment> tail = new ArrayList();
+	List<Segment> tail = new ArrayList<Segment>();
 	
 	Snake (float Xlimit, float Ylimit, int length)
 	{
@@ -31,8 +30,21 @@ public class Snake
 		this.requiredLength = length;
 		length = 1;
 	}
+	
+	void setLength(int length)
+	{
+		if(length>0) this.requiredLength = length;
+	}
+	
 	void Move()
 	{
+		if(length>requiredLength)
+		{
+			for(int i=0; i< length-requiredLength;i++)
+			{
+				tail.remove(tail.size()-1);
+			}
+		}
 		int lastXpos = head.getXpos();
 		int lastYpos = head.getYpos();
 		int lastDirection = head.getDirection();
@@ -112,7 +124,7 @@ public class Snake
 		c.drawColor(0xff000000);
 		c.translate(Xlimit, Ylimit);
 		head.Draw(segSize, c);
-		Iterator<Segment> itr = (Iterator) tail.iterator();
+		Iterator<Segment> itr = (Iterator<Segment>) tail.iterator();
 		while(itr.hasNext())
 		{
 			itr.next().Draw(segSize, c);
