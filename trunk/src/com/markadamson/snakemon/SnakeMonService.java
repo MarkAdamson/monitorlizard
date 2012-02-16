@@ -44,6 +44,7 @@ public class SnakeMonService extends WallpaperService {
         private float mOffset;
         private float mCenterX;
         private float mCenterY;
+        private int mCPU;
         private int mSpeed;
         
         private SharedPreferences prefs;
@@ -149,7 +150,9 @@ public class SnakeMonService extends WallpaperService {
             }
 
             // Reschedule the next redraw
-            long sleepTime = 1000 / ((mSpeed / 3) + 1) - (System.currentTimeMillis() - startTime);
+            if(mSnake.isAlive()) mSpeed = mCPU;
+            else mSpeed=100;
+            long sleepTime = 1000 / ((mSpeed / 3) + 5) - (System.currentTimeMillis() - startTime);
             mHandler.removeCallbacks(mDraw);
             if (mVisible) {
             	if(sleepTime < 0) mHandler.postDelayed(mDraw, 10);
@@ -158,8 +161,9 @@ public class SnakeMonService extends WallpaperService {
         }
         
         void pollSys() {
-        	mSpeed = (int) readUsage();
-        	Log.d("CPU: " ,Integer.toString(mSpeed));
+        	mCPU = readUsage();
+        	Log.d("CPU: " ,Integer.toString(mCPU));
+        	if(!mSnake.isAlive()) mSpeed = 100;
         	mHandler.removeCallbacks(mPollSys);
         	if(mVisible) mHandler.postDelayed(mPollSys, 10000);
         }
@@ -172,7 +176,7 @@ public class SnakeMonService extends WallpaperService {
 			}*/
         }
         
-        private float readUsage() {
+        private int readUsage() {
             try {
                 RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");
                 String load = reader.readLine();
@@ -197,7 +201,9 @@ public class SnakeMonService extends WallpaperService {
                 long cpu2 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4])
                     + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
 
-                return (float)(cpu2 - cpu1) / ((cpu2 + idle2) - (cpu1 + idle1));
+                float usage = (float)(cpu2 - cpu1) / ((cpu2 + idle2) - (cpu1 + idle1));
+                return (int)(usage*100f);
+                //return 0;
 
             } catch (IOException ex) {
                 ex.printStackTrace();
