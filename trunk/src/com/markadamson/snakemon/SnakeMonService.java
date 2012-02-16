@@ -57,6 +57,7 @@ public class SnakeMonService extends WallpaperService {
         return new SnakeEngine(prefs);
     }
 
+    //runs the snake - controls drawable area, and snake speed
     class SnakeEngine extends Engine implements OnSharedPreferenceChangeListener {
 
         @SuppressWarnings("unused")
@@ -70,12 +71,14 @@ public class SnakeMonService extends WallpaperService {
         
         private Snake mSnake;
 
+        //periodically draws a new frame
         private final Runnable mDraw = new Runnable() {
             public void run() {
                 drawFrame();
             }
         };
         
+        //periodically polls the system for usage stats
         private final Runnable mPollSys = new Runnable() {
         	public void run() {
         		pollSys();
@@ -84,6 +87,7 @@ public class SnakeMonService extends WallpaperService {
         
         private boolean mVisible;
 
+        //listen for preference changes
         SnakeEngine(SharedPreferences prefs) {
         	this.prefs = prefs;
         	this.prefs.registerOnSharedPreferenceChangeListener(this);
@@ -97,6 +101,7 @@ public class SnakeMonService extends WallpaperService {
         @Override
         public void onDestroy() {
             super.onDestroy();
+            //stop polling the system and drawing frames
             mHandler.removeCallbacks(mDraw);
             mHandler.removeCallbacks(mPollSys);
         }
@@ -116,13 +121,14 @@ public class SnakeMonService extends WallpaperService {
         @Override
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             super.onSurfaceChanged(holder, format, width, height);
-            // store the center of the surface, so we can draw the cube in the right spot
+            // store the center of the surface, so we can draw the snake in the right spot
             mCenterX = width/2.0f;
             mCenterY = height/2.0f;
-            //prefs.getBoolean("keystring", true);
-            mSpeed = 50;
-            mSnake = new Snake(mCenterX, mCenterY, 50);
+            //get initial system usage values
             pollSys();
+            //initialise the snake
+            mSnake = new Snake(mCenterX, mCenterY, 50);
+            //draw the first frame
             drawFrame();
         }
 
@@ -135,6 +141,7 @@ public class SnakeMonService extends WallpaperService {
         public void onSurfaceDestroyed(SurfaceHolder holder) {
             super.onSurfaceDestroyed(holder);
             mVisible = false;
+            //stop polling the system and drawing frames
             mHandler.removeCallbacks(mDraw);
             mHandler.removeCallbacks(mPollSys);
         }
@@ -149,14 +156,16 @@ public class SnakeMonService extends WallpaperService {
 
         /*
          * Draw one frame of the animation. This method gets called repeatedly
-         * by posting a delayed Runnable. You can do any drawing you want in
-         * here. This example draws a wireframe cube.
+         * by posting a delayed Runnable.
          */
         void drawFrame() {
+        	//get the current time, so we can calculate how long it took to draw this frame
         	long startTime = System.currentTimeMillis();
+        	
             final SurfaceHolder holder = getSurfaceHolder();
-
             Canvas c = null;
+            
+            //move, then draw the snake
             try {
                 c = holder.lockCanvas();
                 if(c != null)
@@ -168,9 +177,12 @@ public class SnakeMonService extends WallpaperService {
                 if (c != null) holder.unlockCanvasAndPost(c);
             }
 
-            // Reschedule the next redraw
+            //if the the snake is dead, tidy it up at full speed
             if(mSnake.isAlive()) mSpeed = mCPU;
             else mSpeed=100;
+            
+            //sleeptime = 1000 / framerate - time take drawing this frame
+            //framerate = speed (0-100) / 3 + 5 (gives a range of 5-38 fps)
             long sleepTime = 1000 / ((mSpeed / 3) + 5) - (System.currentTimeMillis() - startTime);
             mHandler.removeCallbacks(mDraw);
             if (mVisible) {
@@ -182,7 +194,8 @@ public class SnakeMonService extends WallpaperService {
         void pollSys() {
         	mCPU = readUsage();
         	Log.d("CPU: " ,Integer.toString(mCPU));
-        	if(!mSnake.isAlive()) mSpeed = 100;
+        	
+        	//reschedule the next system poll for 10 seconds time
         	mHandler.removeCallbacks(mPollSys);
         	if(mVisible) mHandler.postDelayed(mPollSys, 10000);
         }

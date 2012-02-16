@@ -24,9 +24,11 @@ import android.graphics.Paint;
 
 public class Segment
 {
+	//each segment has a position and direction
 	int Xpos;
 	int Ypos;
 	int direction;
+	//and can draw itself
 	private final Paint mPaint = new Paint();
 	
 	Segment(int Xpos, int Ypos, int direction)
@@ -35,7 +37,7 @@ public class Segment
 		this.Ypos = Ypos;
 		this.direction = direction;
 
-        // Create a Paint to draw the lines for our cube
+        // Create a Paint to draw the segment
         final Paint paint = mPaint;
         paint.setColor(0xff00ff00);
         paint.setAntiAlias(true);
@@ -44,21 +46,14 @@ public class Segment
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
 	}
 	
+	//check whether in it's next frame, this segment will collide with another
 	boolean willCollide(Segment s)
 	{
-		int Xdest = Xpos;
-		int Ydest = Ypos;
-		switch(direction)
-		{
-		case 0: Xdest--; break;
-		case 1: Ydest--; break;
-		case 2: Xdest++; break;
-		case 3: Ydest++; break;
-		}
-		
-		if(Xdest==s.getXpos() && Ydest==s.getYpos()) return true;
+		if(getXdest()==s.getXdest() && getYdest()==s.getYdest()) return true;
 		else return false;
 	}
+	
+	//the rest of this is all pretty straightforward...
 
 	int getXpos()
 	{
