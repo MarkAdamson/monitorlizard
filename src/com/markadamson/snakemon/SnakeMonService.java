@@ -178,16 +178,20 @@ public class SnakeMonService extends WallpaperService {
             }
 
             //if the the snake is dead, tidy it up at full speed
-            if(mSnake.isAlive()) mSpeed = mCPU;
-            else mSpeed=100;
+            mSpeed = mCPU;
             
             //sleeptime = 1000 / framerate - time take drawing this frame
             //framerate = speed (0-100) / 3 + 5 (gives a range of 5-38 fps)
             long sleepTime = 1000 / ((mSpeed / 3) + 5) - (System.currentTimeMillis() - startTime);
             mHandler.removeCallbacks(mDraw);
             if (mVisible) {
-            	if(sleepTime < 0) mHandler.postDelayed(mDraw, 10);
-            	else mHandler.postDelayed(mDraw, sleepTime);
+            	if(mSnake.isAlive())
+            	{
+            		if(sleepTime < 0) mHandler.postDelayed(mDraw, 10);
+            		else mHandler.postDelayed(mDraw, sleepTime);
+            	} else {
+            		mHandler.post(mDraw);
+            	}
             }
         }
         
