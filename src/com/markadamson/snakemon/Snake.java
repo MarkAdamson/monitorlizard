@@ -84,10 +84,14 @@ public class Snake
 			//if the snake is longer than it needs to be
 			if(length>requiredLength)
 			{
+				Log.d(DEB_TAG, "Length: " + length);
+				Log.d(DEB_TAG, "requiredLength: " + requiredLength);
+				Log.d(DEB_TAG, "tail.size(): " + Integer.toString(tail.size()));
 				//lop off the end
 				for(int i=0; i< length-requiredLength;i++)
 				{
 					tail.remove(tail.size()-1);
+					length--;
 				}
 			}
 			

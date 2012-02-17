@@ -21,7 +21,10 @@ package com.markadamson.snakemon;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
+import java.util.Random;
 
+import android.app.ActivityManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Canvas;
@@ -60,12 +63,17 @@ public class SnakeMonService extends WallpaperService {
     //runs the snake - controls drawable area, and snake speed
     class SnakeEngine extends Engine implements OnSharedPreferenceChangeListener {
 
-        @SuppressWarnings("unused")
+        private String DEB_TAG = "SnakeEngine";
+		@SuppressWarnings("unused")
         private float mOffset;
         private float mCenterX;
         private float mCenterY;
         private int mCPU;
+        private int mRAM;
+        private int mProcs;
         private int mSpeed;
+        
+        private int ticker;
         
         private SharedPreferences prefs;
         
@@ -91,6 +99,7 @@ public class SnakeMonService extends WallpaperService {
         SnakeEngine(SharedPreferences prefs) {
         	this.prefs = prefs;
         	this.prefs.registerOnSharedPreferenceChangeListener(this);
+        	ticker = 0;
         }
 
         @Override
@@ -127,7 +136,7 @@ public class SnakeMonService extends WallpaperService {
             //get initial system usage values
             pollSys();
             //initialise the snake
-            mSnake = new Snake(mCenterX, mCenterY, 50);
+            mSnake = new Snake(mCenterX, mCenterY, mRAM);
             //draw the first frame
             drawFrame();
         }
@@ -196,12 +205,17 @@ public class SnakeMonService extends WallpaperService {
         }
         
         void pollSys() {
-        	mCPU = readUsage();
-        	Log.d("CPU: " ,Integer.toString(mCPU));
+        	mCPU = readCPUUsage();
+        	mRAM = readRAMUsage();
+        	mProcs = getNumProcesses();
+        	Log.d("CPU: ", Integer.toString(mCPU));
+        	Log.d("RAM: ", Integer.toString(mRAM));
+        	Log.d("Processes: ", Integer.toString(mProcs));
+        	if(mSnake!=null) mSnake.setLength(mRAM);
         	
         	//reschedule the next system poll for 10 seconds time
         	mHandler.removeCallbacks(mPollSys);
-        	if(mVisible) mHandler.postDelayed(mPollSys, 10000);
+        	if(mVisible) mHandler.postDelayed(mPollSys, 5000);
         }
 
         @Override
@@ -212,7 +226,7 @@ public class SnakeMonService extends WallpaperService {
 			}*/
         }
         
-        private int readUsage() {
+        private int readCPUUsage() {
             try {
                 RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");
                 String load = reader.readLine();
@@ -247,5 +261,35 @@ public class SnakeMonService extends WallpaperService {
 
             return 0;
         } 
+        
+        private int readRAMUsage() {
+            try {
+                RandomAccessFile reader = new RandomAccessFile("/proc/meminfo", "r");
+                String line = reader.readLine();
+                		
+                long memTotal = Long.parseLong(line.substring(9, line.length()-3).trim());
+                
+                line = reader.readLine();
+                
+                long memFree = Long.parseLong(line.substring(8, line.length()-3).trim());
+                
+                reader.close();
+                
+                int usage = (int) (100f / memTotal * (memTotal - memFree));
+                return usage;
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            return 0;
+        }
+        
+        private int getNumProcesses()
+        {
+        	ActivityManager servMng = (ActivityManager) getApplicationContext().getSystemService(ACTIVITY_SERVICE);
+        	List<ActivityManager.RunningAppProcessInfo> list = servMng.getRunningAppProcesses();
+        	return list.size();
+        }
     }
 }
