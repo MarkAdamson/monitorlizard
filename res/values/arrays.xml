@@ -39,4 +39,16 @@
         <item>"20"</item>
         <item>"30"</item>
     </string-array>
+    
+    <string-array name="system_value_choices">
+        <item>"CPU Usage (%)"</item>
+        <item>"RAM Usage (%)"</item>
+        <item>"Number of Active Processes"</item>
+    </string-array>
+    
+    <string-array name="system_value_choice_values">
+        <item>"cpu"</item>
+        <item>"ram"</item>
+        <item>"procs"</item>
+    </string-array>
 </resources>

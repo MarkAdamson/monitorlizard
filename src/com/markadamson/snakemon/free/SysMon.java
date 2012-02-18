@@ -25,7 +25,6 @@ import java.util.List;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 

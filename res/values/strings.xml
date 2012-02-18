@@ -24,9 +24,17 @@
     <string name="description">Displays your system stats as a self-playing game of Snake</string>
     <string name="settings_title">Monitor Lizard Settings</string>
     <string name="wallpaper_name">Monitor Lizard FREE</string>
-    <string name="poll_frequency_setting">System Poll Frequency</string>
+    <string name="settings_category_system">System Settings</string><string name="poll_frequency_setting">System Poll Frequency</string>
     <string name="poll_frequency_setting_desc">How often to query the system for new data</string>
-    <string name="snake_colour_setting">Snake Colour</string>
-    <string name="snake_colour_setting_desc">What colour to draw the Snake</string>
+    <string name="settings_category_snake">Snake Settings</string><string name="snake_colour_setting">Snake Colour</string>
+    <string name="snake_colour_setting_desc">What colour to draw the snake</string>
+    
+    
+    <string name="snake_speed_setting">Snake Speed</string>
+    <string name="snake_speed_setting_desc">What system value should be used for the snake\'s speed</string>
+    <string name="snake_length_setting">Snake Length</string>
+    <string name="snake_length_setting_desc">What system value should be used for the snake\'s length</string>
+    <string name="invert_speed_setting">Invert Snake Speed</string>
+    <string name="invert_speed_setting_desc">Make a higher system value produce a slower snake</string>
 
 </resources>
