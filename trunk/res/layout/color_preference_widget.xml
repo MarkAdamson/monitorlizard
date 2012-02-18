@@ -1,0 +1,8 @@
+<ImageView 
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/color"
+                android:layout_width="32dp" 
+                android:layout_height="32dp"
+                android:layout_marginRight="6sp"
+                android:layout_gravity="right"
+                />
