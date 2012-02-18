@@ -19,8 +19,11 @@
 
 package com.markadamson.snakemon;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 public class Segment
 {
@@ -28,8 +31,10 @@ public class Segment
 	int Xpos;
 	int Ypos;
 	int direction;
+	boolean glow = false;
 	//and can draw itself
 	private final Paint mPaint = new Paint();
+	private final Paint mGlow = new Paint();
 	
 	Segment(int Xpos, int Ypos, int direction)
 	{
@@ -44,6 +49,11 @@ public class Segment
         paint.setStrokeWidth(1);
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        
+        final Paint glow = mGlow;
+        glow.set(paint);
+        glow.setAlpha(127);
+        glow.setMaskFilter(new BlurMaskFilter(15, BlurMaskFilter.Blur.NORMAL));
 	}
 	
 	//check whether in it's next frame, this segment will collide with another
@@ -51,6 +61,11 @@ public class Segment
 	{
 		if(getXdest()==s.getXdest() && getYdest()==s.getYdest()) return true;
 		else return false;
+	}
+	
+	void setGlow(boolean glow)
+	{
+		this.glow = glow;
 	}
 	
 	//the rest of this is all pretty straightforward...
@@ -107,7 +122,16 @@ public class Segment
 	{
 		c.save();
 		c.translate(Xpos * size, Ypos * size);
-		c.drawRect(0, 0, size - 2, size - 2, mPaint);
+		/*float rounding = size/8;
+		RectF rect = new RectF(1, 1, size-1, size-1);
+		c.drawRoundRect(rect, rounding, rounding, mPaint);
+		if(glow)
+		{
+			rect = new RectF(-(size*0.2f), -(size*0.2f), size*1.2f, size*1.2f);
+			c.drawRoundRect(rect, rounding, rounding, mGlow);
+		}*/
+		c.drawRect(1, 1, size - 1, size - 1, mPaint);
+		if(glow) c.drawRect(-(size*0.2f), -(size*0.2f), size*1.2f, size*1.2f, mGlow);
 		c.restore();
 	}
 
