@@ -20,11 +20,13 @@
  */
   -->
 <resources>
-    <string name="app_name">Monitor Lizard Live Wallpaper</string>
+    <string name="app_name">Monitor Lizard Live Wallpaper FREE</string>
     <string name="description">Displays your system stats as a self-playing game of Snake</string>
     <string name="settings_title">Monitor Lizard Settings</string>
-    <string name="wallpaper_name">Monitor Lizard</string>
-    <string name="speed_setting">Snake Speed</string>
-    <string name="speed_setting_desc">Snake speed</string>
+    <string name="wallpaper_name">Monitor Lizard FREE</string>
+    <string name="poll_frequency_setting">System Poll Frequency</string>
+    <string name="poll_frequency_setting_desc">How often to query the system for new data</string>
+    <string name="snake_colour_setting">Snake Colour</string>
+    <string name="snake_colour_setting_desc">What colour to draw the Snake</string>
 
 </resources>
