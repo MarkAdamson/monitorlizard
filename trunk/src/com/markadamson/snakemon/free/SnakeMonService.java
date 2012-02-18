@@ -118,7 +118,7 @@ public class SnakeMonService extends WallpaperService {
             //get initial system usage values
             SysMon.init(getApplicationContext(), Integer.parseInt(prefs.getString("poll_frequency", "10")));
             //initialise the snake
-            mSnake = new Snake(mCenterX, mCenterY, SysMon.RAM, prefs.getInt("snake_colour", 0x00ff00));
+            mSnake = new Snake(mCenterX, mCenterY, SysMon.RAM, prefs.getInt("snake_colour", 0xff00ff00));
             //draw the first frame
             drawFrame();
         }
