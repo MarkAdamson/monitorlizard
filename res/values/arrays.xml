@@ -22,29 +22,21 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string-array name="snake_speeds">
-        <item>"10%"</item>
-        <item>"20%"</item>
-        <item>"30%"</item>
-        <item>"40%"</item>
-        <item>"50%"</item>
-        <item>"60%"</item>
-        <item>"70%"</item>
-        <item>"80%"</item>
-        <item>"90%"</item>
-        <item>"100%"</item>
+    <string-array name="poll_frequencies">
+        <item>"Every Second"</item>
+        <item>"Every 5 Seconds"</item>
+        <item>"Every 10 Seconds"</item>
+        <item>"Every 15 Seconds"</item>
+        <item>"Every 20 Seconds"</item>
+        <item>"Every 30 Seconds"</item>
     </string-array>
     
-    <string-array name="speed_values">
+    <string-array name="poll_frequency_values">
+        <item>"1"</item>
+        <item>"5"</item>
         <item>"10"</item>
+        <item>"15"</item>
         <item>"20"</item>
         <item>"30"</item>
-        <item>"40"</item>
-        <item>"50"</item>
-        <item>"60"</item>
-        <item>"70"</item>
-        <item>"80"</item>
-        <item>"90"</item>
-        <item>"100"</item>
     </string-array>
 </resources>

@@ -21,14 +21,19 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    	xmlns:cmwmobile="http://schemas.android.com/apk/res/com.cmwmobile.android.samples"
         android:title="@string/settings_title"
         android:key="snakemon_settings">
 
 
     <ListPreference
-            android:key="snake_speed"
-            android:title="@string/speed_setting"
-            android:summary="@string/speed_setting_desc"
-            android:entries="@array/snake_speeds"
-            android:entryValues="@array/speed_values" />
+        	android:key="poll_frequency"
+        	android:title="@string/poll_frequency_setting"
+        	android:summary="@string/poll_frequency_setting_desc"
+        	android:entries="@array/poll_frequencies"
+        	android:entryValues="@array/poll_frequency_values" />
+    <com.cmwmobile.android.samples.ColorDialogPreference
+		android:key="snake_colour"
+		android:title="@string/snake_colour_setting"
+		android:summary="@string/snake_colour_setting_desc"/>
 </PreferenceScreen>
