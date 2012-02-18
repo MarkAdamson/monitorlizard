@@ -17,7 +17,7 @@
  *  along with Monitor Lizard.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.markadamson.snakemon;
+package com.markadamson.snakemon.free;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
