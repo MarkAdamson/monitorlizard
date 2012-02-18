@@ -19,18 +19,11 @@
 
 package com.markadamson.snakemon.free;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.List;
-import java.util.Random;
-
-import android.app.ActivityManager;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.service.wallpaper.WallpaperService;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 
@@ -63,17 +56,13 @@ public class SnakeMonService extends WallpaperService {
     //runs the snake - controls drawable area, and snake speed
     class SnakeEngine extends Engine implements OnSharedPreferenceChangeListener {
 
-        private String DEB_TAG = "SnakeEngine";
+        @SuppressWarnings("unused")
+		private String DEB_TAG = "SnakeEngine";
 		@SuppressWarnings("unused")
         private float mOffset;
         private float mCenterX;
         private float mCenterY;
-        private int mCPU;
-        private int mRAM;
-        private int mProcs;
         private int mSpeed;
-        
-        private int ticker;
         
         private SharedPreferences prefs;
         
@@ -86,20 +75,13 @@ public class SnakeMonService extends WallpaperService {
             }
         };
         
-        //periodically polls the system for usage stats
-        private final Runnable mPollSys = new Runnable() {
-        	public void run() {
-        		pollSys();
-        	}
-        };
-        
         private boolean mVisible;
 
         //listen for preference changes
         SnakeEngine(SharedPreferences prefs) {
         	this.prefs = prefs;
         	this.prefs.registerOnSharedPreferenceChangeListener(this);
-        	ticker = 0;
+        	SysMon.init(getApplicationContext(), Integer.parseInt(prefs.getString("poll_frequency", "10")));
         }
 
         @Override
@@ -112,18 +94,18 @@ public class SnakeMonService extends WallpaperService {
             super.onDestroy();
             //stop polling the system and drawing frames
             mHandler.removeCallbacks(mDraw);
-            mHandler.removeCallbacks(mPollSys);
+            SysMon.Stop();
         }
 
         @Override
         public void onVisibilityChanged(boolean visible) {
             mVisible = visible;
             if (visible) {
-                pollSys();
+                SysMon.init(getApplicationContext(), Integer.parseInt(prefs.getString("poll_frequency", "10")));
                 drawFrame();
             } else {
                 mHandler.removeCallbacks(mDraw);
-                mHandler.removeCallbacks(mPollSys);
+                SysMon.Stop();
             }
         }
 
@@ -134,9 +116,9 @@ public class SnakeMonService extends WallpaperService {
             mCenterX = width/2.0f;
             mCenterY = height/2.0f;
             //get initial system usage values
-            pollSys();
+            SysMon.init(getApplicationContext(), Integer.parseInt(prefs.getString("poll_frequency", "10")));
             //initialise the snake
-            mSnake = new Snake(mCenterX, mCenterY, mRAM);
+            mSnake = new Snake(mCenterX, mCenterY, SysMon.RAM, prefs.getInt("snake_colour", 0x00ff00));
             //draw the first frame
             drawFrame();
         }
@@ -152,14 +134,14 @@ public class SnakeMonService extends WallpaperService {
             mVisible = false;
             //stop polling the system and drawing frames
             mHandler.removeCallbacks(mDraw);
-            mHandler.removeCallbacks(mPollSys);
+            SysMon.Stop();
         }
 
         @Override
         public void onOffsetsChanged(float xOffset, float yOffset,
                 float xStep, float yStep, int xPixels, int yPixels) {
             mOffset = xOffset;
-            pollSys();
+            SysMon.init(getApplicationContext(), Integer.parseInt(prefs.getString("poll_frequency", "10")));
             drawFrame();
         }
 
@@ -187,7 +169,7 @@ public class SnakeMonService extends WallpaperService {
             }
 
             //if the the snake is dead, tidy it up at full speed
-            mSpeed = mCPU;
+            mSpeed = SysMon.CPU;
             
             //sleeptime = 1000 / framerate - time take drawing this frame
             //framerate = speed (0-100) / 3 + 5 (gives a range of 5-38 fps)
@@ -203,20 +185,6 @@ public class SnakeMonService extends WallpaperService {
             	}
             }
         }
-        
-        void pollSys() {
-        	mCPU = readCPUUsage();
-        	mRAM = readRAMUsage();
-        	mProcs = getNumProcesses();
-        	Log.d("CPU: ", Integer.toString(mCPU));
-        	Log.d("RAM: ", Integer.toString(mRAM));
-        	Log.d("Processes: ", Integer.toString(mProcs));
-        	if(mSnake!=null) mSnake.setLength(mRAM);
-        	
-        	//reschedule the next system poll for 10 seconds time
-        	mHandler.removeCallbacks(mPollSys);
-        	if(mVisible) mHandler.postDelayed(mPollSys, 5000);
-        }
 
         @Override
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -224,72 +192,10 @@ public class SnakeMonService extends WallpaperService {
 			{
 				mSpeed = Integer.parseInt(prefs.getString(key, "50"));
 			}*/
-        }
-        
-        private int readCPUUsage() {
-            try {
-                RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");
-                String load = reader.readLine();
-
-                String[] toks = load.split(" ");
-
-                long idle1 = Long.parseLong(toks[5]);
-                long cpu1 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4])
-                      + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
-
-                try {
-                    Thread.sleep(360);
-                } catch (Exception e) {}
-
-                reader.seek(0);
-                load = reader.readLine();
-                reader.close();
-
-                toks = load.split(" ");
-
-                long idle2 = Long.parseLong(toks[5]);
-                long cpu2 = Long.parseLong(toks[2]) + Long.parseLong(toks[3]) + Long.parseLong(toks[4])
-                    + Long.parseLong(toks[6]) + Long.parseLong(toks[7]) + Long.parseLong(toks[8]);
-
-                float usage = (float)(cpu2 - cpu1) / ((cpu2 + idle2) - (cpu1 + idle1));
-                return (int)(usage*100f);
-                //return 0;
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            return 0;
-        } 
-        
-        private int readRAMUsage() {
-            try {
-                RandomAccessFile reader = new RandomAccessFile("/proc/meminfo", "r");
-                String line = reader.readLine();
-                		
-                long memTotal = Long.parseLong(line.substring(9, line.length()-3).trim());
-                
-                line = reader.readLine();
-                
-                long memFree = Long.parseLong(line.substring(8, line.length()-3).trim());
-                
-                reader.close();
-                
-                int usage = (int) (100f / memTotal * (memTotal - memFree));
-                return usage;
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            return 0;
-        }
-        
-        private int getNumProcesses()
-        {
-        	ActivityManager servMng = (ActivityManager) getApplicationContext().getSystemService(ACTIVITY_SERVICE);
-        	List<ActivityManager.RunningAppProcessInfo> list = servMng.getRunningAppProcesses();
-        	return list.size();
+        	if(key.equals("snake_colour"))
+        	{
+        		mSnake.setColor(prefs.getInt("snake_colour", 0x00ff00));
+        	}
         }
     }
 }

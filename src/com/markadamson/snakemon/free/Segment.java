@@ -22,8 +22,6 @@ package com.markadamson.snakemon.free;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 
 public class Segment
 {
@@ -36,7 +34,7 @@ public class Segment
 	private final Paint mPaint = new Paint();
 	private final Paint mGlow = new Paint();
 	
-	Segment(int Xpos, int Ypos, int direction)
+	Segment(int Xpos, int Ypos, int direction, int colour)
 	{
 		this.Xpos = Xpos;
 		this.Ypos = Ypos;
@@ -44,7 +42,7 @@ public class Segment
 
         // Create a Paint to draw the segment
         final Paint paint = mPaint;
-        paint.setColor(0xff00ff00);
+        paint.setColor(colour);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(1);
         paint.setStrokeCap(Paint.Cap.ROUND);
@@ -146,5 +144,10 @@ public class Segment
 
 	public void setYpos(int i) {
 		Ypos = i;
+	}
+	
+	public void setColour(int c){
+		mPaint.setColor(c);
+		mGlow.setColor(c);
 	}
 }
