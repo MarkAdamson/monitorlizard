@@ -39,6 +39,7 @@ public class Snake
 	//has an actual length and a required length, allowing it to grow and shrink
 	private int length;
 	private int requiredLength;
+	private int colour;
 	
 	//and a random number generator, for decision making
 	private Random rnd;
@@ -51,20 +52,21 @@ public class Snake
 	//and an arraylist of segments for the 'tail'
 	List<Segment> tail = new ArrayList<Segment>();
 	
-	Snake (float Xlimit, float Ylimit, int length)
+	Snake (float Xlimit, float Ylimit, int length, int colour)
 	{
 		//Initialise values
 		rnd = new Random();
 		rnd.setSeed(System.currentTimeMillis());
 		this.Xlimit = Xlimit;
 		this.Ylimit = Ylimit;
+		this.colour = colour;
 		
 		//set segment size so that there will be 14 segments along the shortest side of the screen
 		if(Xlimit < Ylimit) segSize = Xlimit / 7;
 		else segSize = Ylimit / 7;
 		
 		//initialise the head with a random direction
-		head = new Segment(0, 0, rnd.nextInt(3));
+		head = new Segment(0, 0, rnd.nextInt(3), colour);
 		head.setGlow(true);
 		
 		//set up the length of the snake
@@ -72,6 +74,13 @@ public class Snake
 		length = 1;
 	}
 	
+	public void setColor(int c) {
+		this.colour = c;
+		if(head!=null) head.setColour(c);
+		for(int i=0; i<tail.size();i++)
+			tail.get(i).setColour(c);
+	}
+
 	void setLength(int length)
 	{
 		if(length>0) this.requiredLength = length;
@@ -119,7 +128,7 @@ public class Snake
 			if(length<requiredLength)
 			{
 				//..we can add a new segment at the end!
-				tail.add(new Segment(lastXpos, lastYpos, lastDirection));
+				tail.add(new Segment(lastXpos, lastYpos, lastDirection, colour));
 				length++;
 			}
 			
