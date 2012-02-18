@@ -32,7 +32,7 @@
         	android:summary="@string/poll_frequency_setting_desc"
         	android:entries="@array/poll_frequencies"
         	android:entryValues="@array/poll_frequency_values" />
-    <com.cmwmobile.android.samples.ColorDialogPreference
+    <com.markadamson.snakemon.free.AmbilWarnaPreference
 		android:key="snake_colour"
 		android:title="@string/snake_colour_setting"
 		android:summary="@string/snake_colour_setting_desc"/>
