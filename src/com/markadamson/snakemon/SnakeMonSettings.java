@@ -19,6 +19,8 @@
 
 package com.markadamson.snakemon;
 
+import com.markadamson.snakemon.free.R;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

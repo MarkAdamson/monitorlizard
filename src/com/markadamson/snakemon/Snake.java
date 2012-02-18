@@ -65,6 +65,7 @@ public class Snake
 		
 		//initialise the head with a random direction
 		head = new Segment(0, 0, rnd.nextInt(3));
+		head.setGlow(true);
 		
 		//set up the length of the snake
 		this.requiredLength = length;
