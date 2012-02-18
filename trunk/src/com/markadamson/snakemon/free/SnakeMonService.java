@@ -62,7 +62,11 @@ public class SnakeMonService extends WallpaperService {
         private float mOffset;
         private float mCenterX;
         private float mCenterY;
-        private int mSpeed;
+        private String lengthVal="";
+        private String speedVal="";
+        private boolean invertSpeed=false;
+        private int mLength=1;
+        private int mSpeed=1;
         
         private SharedPreferences prefs;
         
@@ -118,7 +122,13 @@ public class SnakeMonService extends WallpaperService {
             //get initial system usage values
             SysMon.init(getApplicationContext(), Integer.parseInt(prefs.getString("poll_frequency", "10")));
             //initialise the snake
-            mSnake = new Snake(mCenterX, mCenterY, SysMon.RAM, prefs.getInt("snake_colour", 0xff00ff00));
+            speedVal = prefs.getString("snake_speed", "cpu");
+            lengthVal = prefs.getString("snake_length", "ram");
+            if(lengthVal.equalsIgnoreCase("cpu")) mLength = SysMon.CPU;
+            else if(lengthVal.equalsIgnoreCase("ram")) mLength = SysMon.RAM;
+            else if(lengthVal.equalsIgnoreCase("procs")) mLength = SysMon.Processes;
+            
+            mSnake = new Snake(mCenterX, mCenterY, mLength, prefs.getInt("snake_colour", 0xff00ff00));
             //draw the first frame
             drawFrame();
         }
@@ -152,6 +162,17 @@ public class SnakeMonService extends WallpaperService {
         void drawFrame() {
         	//get the current time, so we can calculate how long it took to draw this frame
         	long startTime = System.currentTimeMillis();
+
+            if(lengthVal.equalsIgnoreCase("cpu")) mLength = SysMon.CPU;
+            else if(lengthVal.equalsIgnoreCase("ram")) mLength = SysMon.RAM;
+            else if(lengthVal.equalsIgnoreCase("procs")) mLength = SysMon.Processes;
+            mSnake.setLength(mLength);
+            
+            if(speedVal.equalsIgnoreCase("cpu")) mSpeed = SysMon.CPU;
+            else if(speedVal.equalsIgnoreCase("ram")) mSpeed = SysMon.RAM;
+            else if(speedVal.equalsIgnoreCase("procs")) mSpeed = SysMon.Processes;
+            
+            if(invertSpeed) mSpeed = 100 - mSpeed;
         	
             final SurfaceHolder holder = getSurfaceHolder();
             Canvas c = null;
@@ -167,9 +188,6 @@ public class SnakeMonService extends WallpaperService {
             } finally {
                 if (c != null) holder.unlockCanvasAndPost(c);
             }
-
-            //if the the snake is dead, tidy it up at full speed
-            mSpeed = SysMon.CPU;
             
             //sleeptime = 1000 / framerate - time take drawing this frame
             //framerate = speed (0-100) / 3 + 5 (gives a range of 5-38 fps)
@@ -195,6 +213,12 @@ public class SnakeMonService extends WallpaperService {
         	if(key.equals("snake_colour"))
         	{
         		mSnake.setColor(prefs.getInt("snake_colour", 0x00ff00));
+        	} else if (key.equals("snake_speed")) {
+        		speedVal = prefs.getString("snake_speed", "cpu");
+        	} else if (key.equals("snake_length")) {
+        		lengthVal = prefs.getString("snake_length", "ram");
+        	} else if (key.equals("invert_speed")) {
+        		invertSpeed = prefs.getBoolean("invert_speed", false);
         	}
         }
     }

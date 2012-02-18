@@ -25,15 +25,37 @@
         android:title="@string/settings_title"
         android:key="snakemon_settings">
 
-
+	<PreferenceCategory
+	    android:title="@string/settings_category_system">
     <ListPreference
         	android:key="poll_frequency"
         	android:title="@string/poll_frequency_setting"
         	android:summary="@string/poll_frequency_setting_desc"
         	android:entries="@array/poll_frequencies"
         	android:entryValues="@array/poll_frequency_values" />
+	    
+	</PreferenceCategory>
+	<PreferenceCategory
+	    android:title="@string/settings_category_snake">
     <com.markadamson.snakemon.free.AmbilWarnaPreference
 		android:key="snake_colour"
 		android:title="@string/snake_colour_setting"
 		android:summary="@string/snake_colour_setting_desc"/>
+    <ListPreference
+        android:key="snake_speed"
+        android:title="@string/snake_speed_setting"
+        android:summary="@string/snake_speed_setting_desc"
+        android:entries="@array/system_value_choices"
+        android:entryValues="@array/system_value_choice_values"/>
+    <CheckBoxPreference
+        android:key="invert_speed"
+        android:title="@string/invert_speed_setting"
+        android:summary="@string/invert_speed_setting_desc"/>
+    <ListPreference
+        android:key="snake_length"
+        android:title="@string/snake_length_setting"
+        android:summary="@string/snake_length_setting_desc"
+        android:entries="@array/system_value_choices"
+        android:entryValues="@array/system_value_choice_values"/>
+	</PreferenceCategory>
 </PreferenceScreen>
